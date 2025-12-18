@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Users, Swords, BarChart } from 'lucide-react';
 import Image from 'next/image';
 
-export default async function ManageTournamentPage({ params }: { params: { id: string } }) {
+export default async function ManageTournamentPage({ params }: {params: { id: string } }) {
   const tournament = await getTournamentById(params.id);
   if (!tournament) {
     notFound();
