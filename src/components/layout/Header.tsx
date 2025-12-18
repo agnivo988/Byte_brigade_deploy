@@ -130,13 +130,13 @@ export default function Header() {
 
                   <div className="mt-6 flex flex-col gap-3">
                     <Button asChild variant="outline">
-                      <a href="https://www.login.com" target="_blank">
+                      <a href="https://authbrfr.vercel.app/login" target="_blank">
                         Login
                       </a>
                     </Button>
 
                     <Button asChild>
-                      <a href="https://www.login.com" target="_blank">
+                      <a href="https://authbrfr.vercel.app/register" target="_blank">
                         Sign Up
                       </a>
                     </Button>
