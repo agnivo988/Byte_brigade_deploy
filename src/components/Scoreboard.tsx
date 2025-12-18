@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -10,184 +10,221 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Match } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Separator } from './ui/separator';
-import { Clock, PartyPopper } from 'lucide-react';
+import { Clock, PartyPopper, ThumbsUp, Volume2 } from 'lucide-react';
+
+/* ---------------- WIN PROBABILITY ---------------- */
+
+const calculateWinProbability = (a: number, b: number, t: number) => {
+  let p = 0.5 + (a - b) * 0.12 + ((90 - t) / 90) * 0.08;
+  p = Math.min(Math.max(p, 0.05), 0.95);
+  return { teamA: Math.round(p * 100), teamB: 100 - Math.round(p * 100) };
+};
+
+/* ---------------- COMPONENT ---------------- */
 
 interface ScoreboardProps {
   initialMatch: Match;
 }
 
-const quiz = {
-  question: 'Who won the last World Cup?',
-  options: ['Brazil', 'France', 'Argentina', 'Germany'],
-  answer: 'Argentina',
-};
-
 export default function Scoreboard({ initialMatch }: ScoreboardProps) {
   const [match, setMatch] = useState(initialMatch);
   const [time, setTime] = useState(45);
-  const [selected, setSelected] = useState<string | null>(null);
-  const scoreRef = useRef<HTMLDivElement>(null);
 
-  /* 🎉 CONFETTI FUNCTION */
-  const confettiBlast = () => {
-    confetti({
-      particleCount: 150,
-      spread: 80,
-      origin: { y: 0.6 },
-    });
+  /* Cheer system */
+  const [cheerA, setCheerA] = useState(1);
+  const [cheerB, setCheerB] = useState(1);
+  const [momentum, setMomentum] = useState<number[]>([]);
+
+  /* Audio refs */
+  const cheerSoft = useRef<HTMLAudioElement | null>(null);
+  const cheerLoud = useRef<HTMLAudioElement | null>(null);
+  const ambience = useRef<HTMLAudioElement | null>(null);
+
+  const total = cheerA + cheerB;
+  const percentA = Math.round((cheerA / total) * 100);
+  const percentB = 100 - percentA;
+
+  /* ---------------- AUDIO INIT ---------------- */
+
+  useEffect(() => {
+    cheerSoft.current = new Audio('/sounds/cheer-soft.mp3');
+    cheerLoud.current = new Audio('/sounds/cheer-loud.mp3');
+    ambience.current = new Audio('/sounds/stadium-ambience.mp3');
+    ambience.current.loop = true;
+    ambience.current.volume = 0.2;
+  }, []);
+
+  /* ---------------- STADIUM ATMOSPHERE ---------------- */
+
+  useEffect(() => {
+    if (match.status === 'live') {
+      ambience.current?.play();
+    } else {
+      ambience.current?.pause();
+    }
+  }, [match.status]);
+
+  /* ---------------- CHEER HANDLER ---------------- */
+
+  const cheer = (team: 'A' | 'B') => {
+    if (team === 'A') setCheerA(c => c + 1);
+    else setCheerB(c => c + 1);
+
+    const dominance = Math.abs(percentA - percentB);
+
+    const sound = dominance > 25 ? cheerLoud.current : cheerSoft.current;
+    if (sound) {
+      sound.volume = Math.min(0.2 + dominance / 100, 0.9);
+      sound.currentTime = 0;
+      sound.play();
+    }
   };
 
-  /* Smooth scroll on score change + auto confetti */
+  /* ---------------- MOMENTUM TRACKING ---------------- */
+
   useEffect(() => {
-    scoreRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    confettiBlast();
-  }, [match.scoreA, match.scoreB]);
+    setMomentum(prev => [...prev.slice(-20), percentA - percentB]);
+  }, [cheerA, cheerB]);
+
+  /* ---------------- LIVE MATCH SIM ---------------- */
 
   useEffect(() => {
     if (match.status !== 'live') return;
 
-    const scoreInterval = setInterval(() => {
-      setMatch((prev) => {
-        if (Math.random() > 0.95) {
-          return Math.random() > 0.5
-            ? { ...prev, scoreA: prev.scoreA + 1 }
-            : { ...prev, scoreB: prev.scoreB + 1 };
-        }
-        return prev;
-      });
+    const s = setInterval(() => {
+      if (Math.random() > 0.96) {
+        setMatch(m =>
+          Math.random() > 0.5
+            ? { ...m, scoreA: m.scoreA + 1 }
+            : { ...m, scoreB: m.scoreB + 1 }
+        );
+        confetti({ particleCount: 80, spread: 60 });
+      }
     }, 5000);
 
-    const timeInterval = setInterval(() => {
-      setTime((t) => {
-        if (t >= 90) {
-          clearInterval(scoreInterval);
-          clearInterval(timeInterval);
-          setMatch((m) => ({ ...m, status: 'completed' }));
-          return 90;
-        }
-        return t + 1;
-      });
+    const t = setInterval(() => {
+      setTime(x => (x >= 90 ? 90 : x + 1));
     }, 1000);
 
     return () => {
-      clearInterval(scoreInterval);
-      clearInterval(timeInterval);
+      clearInterval(s);
+      clearInterval(t);
     };
   }, [match.status]);
 
-  const statusInfo = {
-    live: { text: 'Live', color: 'bg-red-700 text-white animate-pulse' },
-    completed: { text: 'Full Time', color: 'bg-secondary text-secondary-foreground' },
-    scheduled: { text: 'Scheduled', color: 'bg-muted text-muted-foreground' },
-  }[match.status];
+  /* ---------------- UI ---------------- */
 
   return (
-    <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}>
-      {/* ================= SCOREBOARD ================= */}
-      <Card className="w-full max-w-4xl mx-auto shadow-2xl">
-        <CardHeader className="text-center p-4 bg-muted/50">
-          <div className="flex justify-center items-center gap-4">
-            <Badge className={cn('capitalize text-sm', statusInfo.color)}>
-              {statusInfo.text}
-            </Badge>
-
-            {match.status === 'live' && (
-              <motion.div
-                className="flex items-center gap-2 text-sm font-mono"
-                animate={{ opacity: [1, 0.6, 1] }}
-                transition={{ repeat: Infinity, duration: 1.2 }}
-              >
-                <Clock className="h-4 w-4" />
-                <span>{time}'</span>
-              </motion.div>
-            )}
+    <div
+      className={cn(
+        'px-4 space-y-10 transition-all',
+        percentA > percentB + 20 && 'bg-green-500/5',
+        percentB > percentA + 20 && 'bg-blue-500/5'
+      )}
+    >
+      {/* SCOREBOARD */}
+      <Card className="max-w-4xl mx-auto shadow-2xl">
+        <CardHeader className="bg-muted/50 text-center">
+          <div className="flex justify-center gap-4">
+            <Badge className="bg-red-600 text-white animate-pulse">LIVE</Badge>
+            <div className="flex items-center gap-1 font-mono">
+              <Clock className="h-4 w-4" /> {time}'
+            </div>
           </div>
         </CardHeader>
 
-        <CardContent className="p-8">
-          <div className="grid grid-cols-3 items-center">
-            {/* Team A */}
-            <motion.div whileHover={{ scale: 1.05 }} className="text-center">
-              <Image src={match.teamA.logoUrl} alt="" width={90} height={90} />
-              <h2 className="font-bold">{match.teamA.name}</h2>
-            </motion.div>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
+            <Button onClick={() => cheer('A')} variant="outline">
+              <ThumbsUp className="text-green-600" />
+            </Button>
 
-            {/* Score */}
-            <div
-              ref={scoreRef}
-              className="flex justify-center text-5xl font-black font-mono"
-            >
-              <AnimatePresence mode="popLayout">
-                <motion.span key={match.scoreA} initial={{ scale: 0.6 }} animate={{ scale: 1 }}>
-                  {match.scoreA}
-                </motion.span>
-              </AnimatePresence>
-              <span className="mx-3 text-muted-foreground">-</span>
-              <AnimatePresence mode="popLayout">
-                <motion.span key={match.scoreB} initial={{ scale: 0.6 }} animate={{ scale: 1 }}>
-                  {match.scoreB}
-                </motion.span>
-              </AnimatePresence>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+              <TeamBlock team={match.teamA} ring="ring-green-500/30" />
+              <div className="text-5xl font-black font-mono px-6">
+                {match.scoreA} - {match.scoreB}
+              </div>
+              <TeamBlock team={match.teamB} ring="ring-blue-500/30" />
             </div>
 
-            {/* Team B */}
-            <motion.div whileHover={{ scale: 1.05 }} className="text-center">
-              <Image src={match.teamB.logoUrl} alt="" width={90} height={90} />
-              <h2 className="font-bold">{match.teamB.name}</h2>
-            </motion.div>
+            <Button onClick={() => cheer('B')} variant="outline">
+              <ThumbsUp className="text-blue-600" />
+            </Button>
           </div>
 
-          {/* 🎉 PARTY POPPER BUTTON */}
-          <div className="flex justify-center mt-8">
-            <Button
-              onClick={confettiBlast}
-              className="gap-2 rounded-full text-lg"
-            >
+          <div className="flex justify-center mt-6">
+            <Button onClick={() => confetti()} className="rounded-full gap-2">
               <PartyPopper /> Celebrate
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* ================= QUIZ SECTION ================= */}
-      <motion.div
-        className="max-w-4xl mx-auto mt-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        <Card className="shadow-xl">
-          <CardHeader>
-            <h3 className="text-xl font-bold text-center">⚽ Match Quiz</h3>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-center font-medium">{quiz.question}</p>
+      {/* CROWD SUPPORT */}
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader className="text-center font-bold">
+          📣 Crowd Support <Volume2 className="inline h-4 ml-2" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Bar label={match.teamA.name} value={percentA} color="bg-green-500" />
+          <Bar label={match.teamB.name} value={percentB} color="bg-blue-500" />
+        </CardContent>
+      </Card>
 
-            <div className="grid grid-cols-2 gap-4">
-              {quiz.options.map((opt) => (
-                <motion.button
-                  key={opt}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setSelected(opt);
-                    if (opt === quiz.answer) confettiBlast();
-                  }}
-                  className={cn(
-                    'p-3 rounded-xl border text-center font-semibold',
-                    selected === opt && opt === quiz.answer
-                      ? 'bg-green-500 text-white'
-                      : selected === opt
-                      ? 'bg-red-500 text-white'
-                      : 'hover:bg-muted'
-                  )}
-                >
-                  {opt}
-                </motion.button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    </motion.div>
+      {/* MOMENTUM GRAPH */}
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader className="text-center font-bold">
+          📈 Crowd Momentum
+        </CardHeader>
+        <CardContent>
+          <svg viewBox="0 0 300 100" className="w-full h-32">
+            <polyline
+              fill="none"
+              stroke="#22c55e"
+              strokeWidth="3"
+              points={momentum
+                .map((v, i) => `${(i / 20) * 300},${50 - v}`)
+                .join(' ')}
+            />
+            <line x1="0" y1="50" x2="300" y2="50" stroke="#999" />
+          </svg>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+/* ---------------- HELPERS ---------------- */
+
+function TeamBlock({ team, ring }: any) {
+  return (
+    <div className="text-center space-y-2">
+      <div
+        className={cn(
+          'relative mx-auto w-20 h-20 rounded-full overflow-hidden ring-4 shadow-lg',
+          ring
+        )}
+      >
+        <Image src={team.logoUrl} alt="" fill className="object-cover" />
+      </div>
+      <p className="font-bold text-sm">{team.name}</p>
+    </div>
+  );
+}
+
+function Bar({ label, value, color }: any) {
+  return (
+    <div>
+      <div className="flex justify-between text-sm font-semibold">
+        <span>{label}</span>
+        <span>{value}%</span>
+      </div>
+      <div className="h-3 bg-muted rounded-full overflow-hidden">
+        <motion.div
+          className={cn('h-full', color)}
+          animate={{ width: `${value}%` }}
+        />
+      </div>
+    </div>
   );
 }
