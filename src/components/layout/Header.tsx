@@ -77,7 +77,7 @@ export default function Header() {
               variant="ghost"
               className="font-semibold"
             >
-              <a href="https://www.login.com" target="_blank">
+              <a href="https://authbrfr.vercel.app/login" target="_blank">
                 Login
               </a>
             </Button>
@@ -86,7 +86,7 @@ export default function Header() {
               asChild
               className="rounded-full px-5 font-semibold"
             >
-              <a href="https://www.login.com" target="_blank">
+              <a href="https://authbrfr.vercel.app/register" target="_blank">
                 Sign Up
               </a>
             </Button>
