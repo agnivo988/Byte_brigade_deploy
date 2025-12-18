@@ -1,3 +1,82 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "Abstract stadium lights background",
+      "imageUrl": "https://images.unsplash.com/photo-1611952053765-c677dedd78bb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdGFkaXVtJTIwbGlnaHRzfGVufDB8fHx8MTc2NjAzMDE3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "stadium lights"
+    },
+    {
+      "id": "tournament-banner-1",
+      "description": "Football on a green pitch",
+      "imageUrl": "https://images.unsplash.com/photo-1546608235-3310a2494cdf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmb290YmFsbCUyMHBpdGNofGVufDB8fHx8MTc2NTk3NjU1OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "football pitch"
+    },
+    {
+      "id": "tournament-banner-2",
+      "description": "Basketball court",
+      "imageUrl": "https://images.unsplash.com/photo-1572454181157-0b40dd7667fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxiYXNrZXRiYWxsJTIwY291cnR8ZW58MHx8fHwxNzY2MDQyMjQ5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "basketball court"
+    },
+    {
+      "id": "tournament-banner-3",
+      "description": "Tennis court with a net",
+      "imageUrl": "https://images.unsplash.com/photo-1465125672495-63cdc2fa22ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0ZW5uaXMlMjBjb3VydHxlbnwwfHx8fDE3NjYwNDI0NDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tennis court"
+    },
+    {
+      "id": "feature-fixtures",
+      "description": "A chart or diagram representing a tournament bracket",
+      "imageUrl": "https://images.unsplash.com/photo-1597775199311-02d23b1a30e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0b3VybmFtZW50JTIwYnJhY2tldHxlbnwwfHx8fDE3NjYwNDUyODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tournament bracket"
+    },
+    {
+      "id": "feature-realtime",
+      "description": "A smartphone showing a live score update",
+      "imageUrl": "https://images.unsplash.com/photo-1578385215219-086ac81983c2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxsaXZlJTIwc2NvcmV8ZW58MHx8fHwxNzY2MDQ1Mjg5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "live score"
+    },
+    {
+      "id": "feature-management",
+      "description": "A clean dashboard interface for management",
+      "imageUrl": "https://images.unsplash.com/photo-1631093441315-a06b9bcbe63f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkYXNoYm9hcmQlMjB1aXxlbnwwfHx8fDE3NjU5NjE2NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dashboard ui"
+    },
+    {
+      "id": "team-logo-1",
+      "description": "Abstract team logo 1",
+      "imageUrl": "https://images.unsplash.com/photo-1587172093052-00c38360d159?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxlYWdsZXMlMjBsb2dvfGVufDB8fHx8MTc2NjAwMzA2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "eagles logo"
+    },
+    {
+      "id": "team-logo-2",
+      "description": "Abstract team logo 2",
+      "imageUrl": "https://images.unsplash.com/photo-1719817250914-6baf8c05ed22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzaGFya3MlMjBsb2dvfGVufDB8fHx8MTc2NjAwMzA2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sharks logo"
+    },
+    {
+      "id": "team-logo-3",
+      "description": "Abstract team logo 3",
+      "imageUrl": "https://images.unsplash.com/photo-1573422145147-7d10765f4d22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsaW9ucyUyMGxvZ298ZW58MHx8fHwxNzY2MDAzMDYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "lions logo"
+    },
+    {
+      "id": "team-logo-4",
+      "description": "Abstract team logo 4",
+      "imageUrl": "https://images.unsplash.com/photo-1616603482021-8c189c6b835e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxiZWFycyUyMGxvZ298ZW58MHx8fHwxNzY2MDAzMDYyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bears logo"
+    },
+    {
+      "id": "team-logo-5",
+      "description": "Abstract team logo 5",
+      "imageUrl": "https://images.unsplash.com/photo-1730014392438-317437a03007?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx0aWdlcnMlMjBsb2dvfGVufDB8fHx8MTc2NjAwMzA2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tigers logo"
+    },
+    {
+      "id": "team-logo-6",
+      "description": "Abstract team logo 6",
+      "imageUrl": "https://images.unsplash.com/photo-1701500096456-28186c4a306d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b2x2ZXMlMjBsb2dvfGVufDB8fHx8MTc2NjAwMzA2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wolves logo"
+    }
+  ]
 }
